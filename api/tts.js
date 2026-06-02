@@ -1,3 +1,5 @@
+import { put } from "@vercel/blob";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -26,14 +28,15 @@ export default async function handler(req, res) {
       return res.status(r.status).json({ error: errText });
     }
     const buf = Buffer.from(await r.arrayBuffer());
+    const filename = "fala-" + Date.now() + ".mp3";
+    const blob = await put(filename, buf, {
+      access: "public",
+      contentType: "audio/mpeg"
+    });
     return res.status(200).json({
-      openaiFileResponse: [
-        {
-          name: "fala.mp3",
-          mime_type: "audio/mpeg",
-          content: buf.toString("base64")
-        }
-      ]
+      url: blob.url,
+      name: filename,
+      mime_type: "audio/mpeg"
     });
   } catch (e) {
     return res.status(500).json({ error: String(e) });
