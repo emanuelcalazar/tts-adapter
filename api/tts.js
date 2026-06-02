@@ -30,7 +30,8 @@ export default async function handler(req, res) {
     const buf = Buffer.from(await r.arrayBuffer());
     const filename = "fala-" + Date.now() + ".mp3";
     const blob = await put(filename, buf, {
-            addRandomSuffix: true,
+      access: "public",
+      addRandomSuffix: true,
       contentType: "audio/mpeg"
     });
     return res.status(200).json({
